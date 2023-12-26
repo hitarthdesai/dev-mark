@@ -2,21 +2,18 @@ mod command;
 
 fn main() {
     let mut arguments = std::env::args();
+    arguments.next(); // Skip the first argument
 
-    let command = arguments.nth(1).expect("Command Expected");
-
+    let command = arguments.next().expect("Command Expected");
     match command.as_str() {
         "mark" => {
-            let _input_text: Vec<String> = arguments.collect();
-            let input_text = _input_text.join(" ");
-
-            command::mark::add_mark_to_file(&input_text, "marks.txt").expect("Could not write to file");
+            command::mark::get_input_for_mark();
         },
         "marks" => {
            command::marks::list_marks("marks.txt").expect("Could not read file");
         },
         "unmark" => {
-            command::unmark::start_interactive_session("marks.txt").expect("Could not read file");
+            command::unmark::get_input_for_unmark();
         },
         _ => {
             // Invalid command, print an error message
