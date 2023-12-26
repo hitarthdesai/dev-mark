@@ -1,5 +1,4 @@
-mod mark;
-mod marks;
+mod command;
 
 fn main() {
     let mut arguments = std::env::args();
@@ -11,10 +10,10 @@ fn main() {
             let _input_text: Vec<String> = arguments.collect();
             let input_text = _input_text.join(" ");
 
-            mark::add_mark_to_file(&input_text, "marks.txt").expect("Could not write to file");
+            command::mark::add_mark_to_file(&input_text, "marks.txt").expect("Could not write to file");
         },
         "marks" => {
-           marks::list_marks("marks.txt").expect("Could not read file");
+           command::marks::list_marks("marks.txt").expect("Could not read file");
         },
         _ => {
             // Invalid command, print an error message
