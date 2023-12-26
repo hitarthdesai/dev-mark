@@ -6,5 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+inquire = "0.6.2"
 chrono = { version = "0.4.31", features = [] }
 crossterm = "0.27.0"
