@@ -5,8 +5,7 @@ fn _format_marks(marks: &str) -> String {
     let mut formatted_marks = String::new();
 
     for mark in marks.lines() {
-        let mark = mark.trim();
-        let mark = mark.split(" - ").collect::<Vec<&str>>();
+        let mark = mark.trim().split(" - ").collect::<Vec<&str>>();
 
         match mark.len() {
             2 => {
@@ -26,16 +25,19 @@ fn _format_marks(marks: &str) -> String {
     formatted_marks
 }
 
-pub fn list_marks(file_path: &str) -> std::io::Result<()> {
-    // Format the mark with the timestamp
-
-    // Open the file in append mode or create it if it doesn't exist
+pub fn read_marks(file_path: &str) -> std::io::Result<String> {
     let mut file = std::fs::OpenOptions::new()
         .read(true)
-        .open(file_path)?;
+        .open(file_path).unwrap();
 
     let mut contents = String::new();
-    file.read_to_string(&mut contents)?;
+    file.read_to_string(&mut contents).unwrap();
+
+    Ok(contents)
+}
+
+pub fn list_marks(file_path: &str) -> std::io::Result<()> {
+    let contents = read_marks(file_path).unwrap();
 
     println!("{}", _format_marks(contents.as_str()));
 

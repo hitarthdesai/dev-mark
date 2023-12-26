@@ -15,6 +15,9 @@ fn main() {
         "marks" => {
            command::marks::list_marks("marks.txt").expect("Could not read file");
         },
+        "unmark" => {
+            command::unmark::start_interactive_session("marks.txt").expect("Could not read file");
+        },
         _ => {
             // Invalid command, print an error message
             eprintln!("Error: Invalid command. Allowed values: mark");

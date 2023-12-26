@@ -15,10 +15,10 @@ pub fn add_mark_to_file(mark_text: &str, file_path: &str) -> std::io::Result<()>
     let mut file = std::fs::OpenOptions::new()
         .create(true)
         .append(true)
-        .open(file_path)?;
+        .open(file_path).unwrap();
 
     // Write the mark with time to the file
-    writeln!(file, "{}", mark_with_time)?;
+    writeln!(file, "{}", mark_with_time).unwrap();
 
     Ok(())
 }
