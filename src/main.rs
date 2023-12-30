@@ -1,13 +1,17 @@
 mod command;
+mod db;
 
-fn main() {
+#[tokio::main]
+async fn main() {
+    let client = db::connect::connect_to_db().await.expect("Could not connect to db");
+
     let mut arguments = std::env::args();
     arguments.next(); // Skip the first argument
 
     let command = arguments.next().expect("Command Expected");
     match command.as_str() {
         "mark" => {
-            command::mark::get_input_for_mark();
+            command::mark::add_mark(&client).await.expect("Could not add mark");
         },
         "marks" => {
            command::marks::list_marks("marks.txt").expect("Could not read file");
