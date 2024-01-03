@@ -2,26 +2,26 @@ use inquire::{Confirm, MultiSelect};
 use inquire::list_option::ListOption;
 use inquire::validator::Validation;
 
-pub fn get_input_for_unmark() {
-    let _marks = crate::command::marks::read_marks("marks.txt").unwrap();
-    let marks = _marks.lines().collect::<Vec<&str>>();
-
-    let _selected_marks = MultiSelect::new("Select marks you no longer need", marks)
-        .with_formatter(&|marks| format!("{} marks selected", marks.len()))
-        .with_validator(&|marks: &[ListOption<&&str>]| {
-            match marks.len() >= 1 {
-                true => Ok(Validation::Valid),
-                false => Ok(Validation::Invalid("Select at least one mark".into())),
-            }
-        })
-        .prompt()
-        .unwrap();
-
-    let _confirm_unmark = Confirm::new("Proceed with un-marking?")
-        .with_default(false)
-        .prompt()
-        .unwrap();
-}
+// pub fn get_input_for_unmark() {
+//     let _marks = crate::command::marks::read_marks("marks.txt").unwrap();
+//     let marks = _marks.lines().collect::<Vec<&str>>();
+//
+//     let _selected_marks = MultiSelect::new("Select marks you no longer need", marks)
+//         .with_formatter(&|marks| format!("{} marks selected", marks.len()))
+//         .with_validator(&|marks: &[ListOption<&&str>]| {
+//             match marks.len() >= 1 {
+//                 true => Ok(Validation::Valid),
+//                 false => Ok(Validation::Invalid("Select at least one mark".into())),
+//             }
+//         })
+//         .prompt()
+//         .unwrap();
+//
+//     let _confirm_unmark = Confirm::new("Proceed with un-marking?")
+//         .with_default(false)
+//         .prompt()
+//         .unwrap();
+// }
 
 // pub fn start_interactive_session(file_path: &str) -> std::io::Result<()> {
 //     execute!(

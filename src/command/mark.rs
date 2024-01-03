@@ -1,12 +1,12 @@
 use inquire::{required, Text};
 use tokio_postgres::Client;
 
-struct Mark {
+struct InputMark {
     title: String,
     note: String,
 }
 
-fn get_input_for_mark() -> Mark {
+fn get_input_for_mark() -> InputMark {
     let _title = Text::new("Title")
         .with_placeholder("Title for new mark")
         .with_validator(required!("Title is required"))
@@ -19,7 +19,7 @@ fn get_input_for_mark() -> Mark {
         .with_help_message("Enter what you want to be marked")
         .prompt().unwrap();
 
-    return Mark {
+    return InputMark {
         title: _title,
         note: _note,
     };

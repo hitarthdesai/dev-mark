@@ -1,45 +1,36 @@
-use std::io::{Read};
-use chrono::{Utc, TimeZone};
+use chrono::{DateTime, Local};
+use tokio_postgres::Client;
 
-fn _format_marks(marks: &str) -> String {
-    let mut formatted_marks = String::new();
-
-    for mark in marks.lines() {
-        let mark = mark.trim().split(" - ").collect::<Vec<&str>>();
-
-        match mark.len() {
-            2 => {
-                let _timestamp = mark[0].parse::<i64>().unwrap();
-                let formatted_time_stamp = Utc
-                    .timestamp_opt(_timestamp, 0)
-                    .unwrap()
-                    .format("On %B %e, %Y at %H:%M:%S").to_string();
-                let mark = mark[1];
-
-                formatted_marks.push_str(&format!("{} - {}\n", formatted_time_stamp, mark));
-            },
-            _ => { eprintln!("Invalid mark: {}", mark.join(" - ")); },
-        };
-    }
-
-    formatted_marks
+#[derive(Debug)]
+pub struct Mark {
+    id: i8,
+    title: String,
+    note: String,
+    created_at: DateTime<Local>,
 }
 
-pub fn read_marks(file_path: &str) -> std::io::Result<String> {
-    let mut file = std::fs::OpenOptions::new()
-        .read(true)
-        .open(file_path).unwrap();
+pub async fn read_marks(client: &Client) -> std::io::Result<Vec<Mark>> {
+    let statement = client.prepare("SELECT * FROM Marks ORDER BY created_at LIMIT 5").await.expect("Could not prepare statement");
+    let _rows = client.query(&statement, &[]).await.expect("Could not execute query");
 
-    let mut contents = String::new();
-    file.read_to_string(&mut contents).unwrap();
+    let rows: Vec<Mark> = _rows.iter().map(|row| {
+        let id: i8 = i8::try_from(row.get::<&str, i64>("id")).unwrap();
+        let title = row.get::<&str, &str>("title").to_string();
+        let note = row.get::<&str, &str>("note").to_string();
+        let created_at = row.get::<&str, DateTime<Local>>("created_at");
 
-    Ok(contents)
+        return Mark { id, title, note, created_at }
+    }).collect();
+
+    return Ok(rows)
 }
 
-pub fn list_marks(file_path: &str) -> std::io::Result<()> {
-    let contents = read_marks(file_path).unwrap();
+pub async fn list_marks(client: &Client) -> std::io::Result<()> {
+    let marks = read_marks(client).await.unwrap();
 
-    println!("{}", _format_marks(contents.as_str()));
+    marks.iter().for_each(|mark| {
+        println!("On {}:\n{}\n", mark.created_at.format("%B%e, %Y at %H:%M").to_string(), mark.title);
+    });
 
     Ok(())
 }

@@ -14,10 +14,10 @@ async fn main() {
             command::mark::add_mark(&client).await.expect("Could not add mark");
         },
         "marks" => {
-           command::marks::list_marks("marks.txt").expect("Could not read file");
+            command::marks::list_marks(&client).await.expect("Could not read marks");
         },
         "unmark" => {
-            command::unmark::get_input_for_unmark();
+            // command::unmark::get_input_for_unmark();
         },
         _ => {
             // Invalid command, print an error message

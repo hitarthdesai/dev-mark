@@ -8,6 +8,6 @@ edition = "2021"
 [dependencies]
 inquire = "0.6.2"
 tokio = { version = "*", features = ["full"] }
-tokio-postgres = "0.7.10"
+tokio-postgres = { version = "0.7.10", features = ["with-chrono-0_4"] }
 chrono = { version = "0.4.31", features = [] }
 crossterm = "0.27.0"
