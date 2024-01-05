@@ -1,4 +1,5 @@
-use inquire::{required, Text};
+use std::ffi::OsStr;
+use inquire::{Editor, required, Text};
 use tokio_postgres::Client;
 
 struct InputMark {
@@ -13,8 +14,8 @@ fn get_input_for_mark() -> InputMark {
         .with_help_message("Write what this mark is about")
         .prompt().unwrap();
 
-    let _note = Text::new("Mark")
-        .with_placeholder("Mark text")
+    let _note = Editor::new("Mark")
+        .with_editor_command(OsStr::new("vim"))
         .with_validator(required!("Mark text is required"))
         .with_help_message("Enter what you want to be marked")
         .prompt().unwrap();
