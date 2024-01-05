@@ -1,12 +1,19 @@
+use std::fmt::{Display, Formatter};
 use chrono::{DateTime, Local};
 use tokio_postgres::Client;
 
 #[derive(Debug)]
 pub struct Mark {
-    id: i8,
+    pub id: i8,
     title: String,
     note: String,
     created_at: DateTime<Local>,
+}
+
+impl Display for Mark {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} on {}", self.title, self.created_at.format("%B%e, %Y at %H:%M"))
+    }
 }
 
 pub async fn read_marks(client: &Client) -> std::io::Result<Vec<Mark>> {

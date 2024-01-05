@@ -17,7 +17,7 @@ async fn main() {
             command::marks::list_marks(&client).await.expect("Could not read marks");
         },
         "unmark" => {
-            // command::unmark::get_input_for_unmark();
+            command::unmark::remove_mark(&client).await.expect("Could not remove mark");
         },
         _ => {
             // Invalid command, print an error message
