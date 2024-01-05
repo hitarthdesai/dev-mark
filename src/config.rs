@@ -4,9 +4,15 @@ use std::sync::Mutex;
 use serde::{Deserialize, Serialize};
 use lazy_static::lazy_static;
 
+#[derive(Debug, Deserialize, Serialize)]
+pub enum MarkStyle {
+    Default,
+    Extended,
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
-    pub mark_style: String,
+    pub mark_style: MarkStyle,
     pub editor: String,
 }
 
