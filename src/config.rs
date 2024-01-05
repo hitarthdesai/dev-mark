@@ -1,5 +1,8 @@
 use std::fs;
+use std::io::Error;
+use std::sync::Mutex;
 use serde::{Deserialize, Serialize};
+use lazy_static::lazy_static;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
@@ -7,11 +10,17 @@ pub struct Config {
     pub editor: String,
 }
 
-pub fn read_config() -> Result<Config, Box<dyn std::error::Error>> {
+lazy_static! {
+    pub static ref CONFIG: Mutex<Option<Config>> = Mutex::new(None);
+}
+
+pub fn initialize_config() -> Result<(), Error> {
     let _config = fs::read_to_string("./src/config.json")?;
     let config: Config = serde_json::from_str(&_config)?;
 
-    println!("{:#?}", config);
+    let mut guard = CONFIG.lock().unwrap();
+    assert!( guard.is_none() );
 
-    Ok(config)
+    *guard = Some(config);
+    Ok(())
 }

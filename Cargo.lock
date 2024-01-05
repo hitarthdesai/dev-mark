@@ -248,6 +248,7 @@ dependencies = [
  "config",
  "crossterm 0.27.0",
  "inquire",
+ "lazy_static",
  "serde",
  "serde_json",
  "tokio",
