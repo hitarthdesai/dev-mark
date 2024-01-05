@@ -1,8 +1,10 @@
 mod command;
 mod db;
+mod config;
 
 #[tokio::main]
 async fn main() {
+    let _config = config::read_config().expect("Could not read config");
     let client = db::connect::connect_to_db().await.expect("Could not connect to db");
 
     let mut arguments = std::env::args();
