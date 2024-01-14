@@ -16,7 +16,22 @@ async fn main() {
     let command = arguments.next().expect("Command Expected");
     match command.as_str() {
         "mark" => {
-            command::mark::add_mark(&client).await.expect("Could not add mark");
+            match arguments.next() {
+                Some(_t) => {
+                    let t = _t.as_str();
+                    match t {
+                        "--future" => {
+                            command::mark::add_mark(&client, true).await.expect("Could not add mark");
+                        },
+                        _ => {
+                            panic!("Error: Invalid argument. Allowed values: --future, no values for today");
+                        }
+                    }
+                },
+                None => {
+                    command::mark::add_mark(&client, false).await.expect("Could not add mark");
+                }
+            }
         },
         "marks" => {
             let mut _time_arg = arguments.next();

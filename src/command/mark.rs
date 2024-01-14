@@ -1,20 +1,22 @@
 use std::ffi::OsStr;
-use inquire::{Editor, required, Text};
+use chrono::NaiveDate;
+use inquire::{DateSelect, Editor, required, Text};
 use tokio_postgres::Client;
 use crate::config;
 
 struct InputMark {
     title: Option<String>,
     note: String,
+    date: Option<NaiveDate>,
 }
 
-fn get_input_for_mark() -> InputMark {
+fn get_input_for_mark(should_provide_date_picker: bool) -> InputMark {
     let guard = config::CONFIG.lock().unwrap();
     let config = guard.as_ref().unwrap();
     let mark_style = &config.mark_style;
     let editor = &config.editor;
 
-     match mark_style {
+    let mut input_mark = match mark_style {
         config::MarkStyle::Default => {
             let _note = Text::new("Mark")
                 .with_placeholder("Some text to be marked")
@@ -25,6 +27,7 @@ fn get_input_for_mark() -> InputMark {
             InputMark {
                 title: None,
                 note: _note,
+                date: None,
             }
         },
 
@@ -44,13 +47,27 @@ fn get_input_for_mark() -> InputMark {
             InputMark {
                 title: Some(_title),
                 note: _note,
+                date: None,
             }
         },
+    };
+
+    match should_provide_date_picker {
+        true => {
+            let _date = DateSelect::new("Date")
+                .with_help_message("Enter date for mark")
+                .prompt().unwrap();
+
+            input_mark.date = Some(_date);
+        },
+        false => {},
     }
+
+    return input_mark;
 }
 
-pub async fn add_mark(client: &Client) -> std::io::Result<()> {
-    let input = get_input_for_mark();
+pub async fn add_mark(client: &Client, should_provide_date_picker: bool) -> std::io::Result<()> {
+    let input = get_input_for_mark(should_provide_date_picker);
 
     let statement = client.prepare("INSERT INTO marks (title, note) VALUES ($1, $2) RETURNING id").await.expect("Could not prepare statement");
     client.query(&statement, &[&input.title.unwrap_or(String::new()), &input.note]).await.expect("Could not execute query");
