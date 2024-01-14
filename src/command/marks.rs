@@ -1,6 +1,6 @@
 use std::fmt::{Display, Formatter};
-use chrono::{DateTime, Local};
-use tokio_postgres::Client;
+use chrono::{DateTime, Local, NaiveDate};
+use tokio_postgres::{Client, Row};
 
 #[derive(Debug)]
 pub struct Mark {
@@ -16,9 +16,17 @@ impl Display for Mark {
     }
 }
 
-pub async fn read_marks(client: &Client) -> std::io::Result<Vec<Mark>> {
-    let statement = client.prepare("SELECT * FROM Marks ORDER BY created_at LIMIT 5").await.expect("Could not prepare statement");
-    let _rows = client.query(&statement, &[]).await.expect("Could not execute query");
+pub async fn read_marks(client: &Client, time_frame: Option<NaiveDate>) -> std::io::Result<Vec<Mark>> {
+    let _rows: Vec<Row> = match time_frame {
+        None => {
+            let statement = client.prepare("SELECT * FROM Marks ORDER BY created_at").await.expect("Could not prepare statement");
+            client.query(&statement, &[]).await.expect("Could not execute query")
+        },
+        Some(t) => {
+            let statement = client.prepare("SELECT * FROM Marks WHERE created_at::date=$1 ORDER BY created_at").await.expect("Could not prepare statement");
+            client.query(&statement, &[&t]).await.expect("Could not execute query")
+        }
+    };
 
     let rows: Vec<Mark> = _rows.iter().map(|row| {
         let id: i8 = i8::try_from(row.get::<&str, i64>("id")).unwrap();
@@ -32,8 +40,8 @@ pub async fn read_marks(client: &Client) -> std::io::Result<Vec<Mark>> {
     return Ok(rows)
 }
 
-pub async fn list_marks(client: &Client) -> std::io::Result<()> {
-    let marks = read_marks(client).await.unwrap();
+pub async fn list_marks(client: &Client, time_frame: Option<NaiveDate>) -> std::io::Result<()> {
+    let marks = read_marks(client, time_frame).await.unwrap();
 
     marks.iter().for_each(|mark| {
         println!("On {}:\n{}\n", mark.created_at.format("%B%e, %Y at %H:%M").to_string(), mark.title);

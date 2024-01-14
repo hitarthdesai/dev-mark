@@ -1,3 +1,6 @@
+use chrono::NaiveDate;
+use regex::Regex;
+
 mod command;
 mod db;
 mod config;
@@ -16,7 +19,36 @@ async fn main() {
             command::mark::add_mark(&client).await.expect("Could not add mark");
         },
         "marks" => {
-            command::marks::list_marks(&client).await.expect("Could not read marks");
+            let mut _time_arg = arguments.next();
+            let mut time_option: Option<NaiveDate> = None;
+
+            match _time_arg {
+                Some(t) => {
+                    let _t = t.as_str();
+                    match Regex::new(r"--date=([^ ]+)").unwrap().captures(&_t) {
+                        None => {},
+                        Some(c) => {
+                            let date = c.get(1).unwrap().as_str();
+                            time_option = Some(NaiveDate::parse_from_str(date, "%Y-%m-%d").expect("Invalid date format"));
+                        }
+                    }
+
+                    match _t {
+                        "--today" => {
+                            time_option = Some(chrono::Utc::now().date_naive());
+                        },
+                        _ => {
+                            panic!("Error: Invalid argument. Allowed values: --today, --date=YYYY-MM-DD");
+                        }
+                    }
+                },
+                None => {
+                    /* TODO: Allow to default to --today in config.json */
+                    panic!("Error: No argument found. Allowed values: --today, --date=YYYY-MM-DD");
+                }
+            }
+
+            command::marks::list_marks(&client, time_option).await.expect("Could not get marks");
         },
         "unmark" => {
             command::unmark::remove_mark(&client).await.expect("Could not remove mark");
