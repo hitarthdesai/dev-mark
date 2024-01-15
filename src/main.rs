@@ -16,31 +16,28 @@ async fn main() {
     let command = arguments.next().expect("Command Expected");
     match command.as_str() {
         "mark" => {
-            match arguments.next() {
-                Some(_t) => {
-                    let t = _t.as_str();
-                    match t {
-                        "--future" => {
-                            command::mark::add_mark(&client, true).await.expect("Could not add mark");
-                        },
+            let should_provide_date_picker = match arguments.next() {
+                Some(t) => {
+                    match t.as_str() {
+                        "--future" => { true },
                         _ => {
-                            panic!("Error: Invalid argument. Allowed values: --future, no values for today");
+                            panic!("Error: Invalid argument. Allowed values: --future, or provide no args for today");
                         }
                     }
                 },
-                None => {
-                    command::mark::add_mark(&client, false).await.expect("Could not add mark");
-                }
-            }
+                None => { false }
+            };
+
+            command::mark::add_mark(&client, should_provide_date_picker).await.expect("Could not add mark");
         },
         "marks" => {
             let mut _time_arg = arguments.next();
             let mut time_option: Option<NaiveDate> = None;
 
             match _time_arg {
-                Some(t) => {
-                    let _t = t.as_str();
-                    match Regex::new(r"--date=([^ ]+)").unwrap().captures(&_t) {
+                Some(_t) => {
+                    let t = _t.as_str();
+                    match Regex::new(r"--date=([^ ]+)").unwrap().captures(&t) {
                         None => {},
                         Some(c) => {
                             let date = c.get(1).unwrap().as_str();
@@ -48,7 +45,7 @@ async fn main() {
                         }
                     }
 
-                    match _t {
+                    match t {
                         "--today" => {
                             time_option = Some(chrono::Utc::now().date_naive());
                         },

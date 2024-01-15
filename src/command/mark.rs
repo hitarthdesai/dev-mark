@@ -1,9 +1,10 @@
 use std::ffi::OsStr;
-use chrono::NaiveDate;
+use chrono::{FixedOffset, NaiveDate};
 use inquire::{DateSelect, Editor, required, Text};
 use tokio_postgres::Client;
 use crate::config;
 
+#[derive(Debug)]
 struct InputMark {
     title: Option<String>,
     note: String,
@@ -69,8 +70,15 @@ fn get_input_for_mark(should_provide_date_picker: bool) -> InputMark {
 pub async fn add_mark(client: &Client, should_provide_date_picker: bool) -> std::io::Result<()> {
     let input = get_input_for_mark(should_provide_date_picker);
 
-    let statement = client.prepare("INSERT INTO marks (title, note) VALUES ($1, $2) RETURNING id").await.expect("Could not prepare statement");
-    client.query(&statement, &[&input.title.unwrap_or(String::new()), &input.note]).await.expect("Could not execute query");
+    let statement = client.prepare("INSERT INTO marks (title, note, created_at) VALUES ($1, $2, $3) RETURNING id").await.expect("Could not prepare statement");
+
+    let _title = &input.title.unwrap_or(String::new());
+    let _created_at = &match input.date {
+        Some(d) => { d.and_hms_opt(0, 0, 0).unwrap() },
+        None => { chrono::Local::now().naive_local() }
+    };
+
+    client.query(&statement, &[_title, &input.note, _created_at]).await.expect("Could not execute query");
 
     Ok(())
 }
