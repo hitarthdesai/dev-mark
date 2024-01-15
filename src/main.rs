@@ -1,5 +1,4 @@
 use chrono::NaiveDate;
-use regex::Regex;
 
 mod command;
 mod db;
@@ -36,21 +35,22 @@ async fn main() {
 
             match _time_arg {
                 Some(_t) => {
-                    let t = _t.as_str();
-                    match Regex::new(r"--date=([^ ]+)").unwrap().captures(&t) {
-                        None => {},
-                        Some(c) => {
-                            let date = c.get(1).unwrap().as_str();
-                            time_option = Some(NaiveDate::parse_from_str(date, "%Y-%m-%d").expect("Invalid date format"));
-                        }
-                    }
-
-                    match t {
+                    match _t.as_str() {
                         "--today" => {
-                            time_option = Some(chrono::Utc::now().date_naive());
+                            time_option = Some(chrono::Local::now().date_naive());
                         },
-                        _ => {
-                            panic!("Error: Invalid argument. Allowed values: --today, --date=YYYY-MM-DD");
+                        t => {
+                            match t.starts_with("--date=") {
+                                false => {
+                                    /* TODO: Allow to default to --today in config.json */
+                                    panic!("Error: Invalid argument. Allowed values: --today, --date=YYYY-MM-DD");
+                                },
+                                true => {
+                                    let date = t.replace("--date=", "");
+                                    time_option = Some(NaiveDate::parse_from_str(date.as_str(), "%Y-%m-%d").expect("Invalid date format, expected YYYY-MM-DD"));
+                                }
+                            }
+
                         }
                     }
                 },
