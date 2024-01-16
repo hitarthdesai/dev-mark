@@ -1,3 +1,4 @@
+use chrono::NaiveDate;
 use inquire::{Confirm, MultiSelect};
 use inquire::list_option::ListOption;
 use inquire::validator::Validation;
@@ -32,8 +33,13 @@ fn get_input_for_unmark(marks: Vec<Mark>) -> InputUnmark {
     }
 }
 
-pub async fn remove_mark(client: &Client) -> std::io::Result<()> {
-    let _marks = crate::command::marks::read_marks(client, chrono::Utc::now().date_naive()).await.expect("Unable to read marks");
+pub async fn remove_mark(client: &Client, date: NaiveDate) -> std::io::Result<()> {
+    let _marks = crate::command::marks::read_marks(client, date).await.expect("Unable to read marks");
+    if _marks.len() == 0 {
+        println!("You have no marks for {}", date.format("%B %e, %Y").to_string());
+        return Ok(());
+    }
+
     let input = get_input_for_unmark(_marks);
 
     if !input.confirm {

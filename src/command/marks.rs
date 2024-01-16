@@ -34,9 +34,15 @@ pub async fn read_marks(client: &Client, date: NaiveDate) -> std::io::Result<Vec
 
 pub async fn list_marks(client: &Client, date: NaiveDate) -> std::io::Result<()> {
     let marks = read_marks(client, date).await.unwrap();
+    if marks.len() == 0 {
+        println!("You have no marks for {}", date.format("%B %e, %Y").to_string());
+        return Ok(());
+    }
 
+
+    println!("On {}, you marked:", date.format("%B %e, %Y").to_string());
     marks.iter().for_each(|mark| {
-        println!("On {}:\n{}\n", mark.created_at.format("%B %e, %Y at %H:%M").to_string(), mark.note);
+        println!("{}: {}\n", mark.created_at.format("%H:%M").to_string(), mark.note);
     });
 
     Ok(())

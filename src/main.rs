@@ -61,7 +61,34 @@ async fn main() {
             command::marks::list_marks(&client, date).await.expect("Could not get marks");
         },
         "unmark" => {
-            command::unmark::remove_mark(&client).await.expect("Could not remove mark");
+            let mut _time_arg = arguments.next();
+            let date: NaiveDate = match _time_arg {
+                Some(_t) => {
+                    match _t.as_str() {
+                        "--today" => {
+                            chrono::Local::now().date_naive()
+                        },
+                        t => {
+                            match t.starts_with("--date=") {
+                                false => {
+                                    /* TODO: Allow to default to --today in config.json */
+                                    panic!("Error: Invalid argument. Allowed values: --today, --date=YYYY-MM-DD");
+                                },
+                                true => {
+                                    let date = t.replace("--date=", "");
+                                    NaiveDate::parse_from_str(date.as_str(), "%Y-%m-%d").expect("Invalid date format, expected YYYY-MM-DD")
+                                }
+                            }
+                        }
+                    }
+                },
+                None => {
+                    /* TODO: Allow to default to --today in config.json */
+                    panic!("Error: No argument found. Allowed values: --today, --date=YYYY-MM-DD");
+                }
+            };
+
+            command::unmark::remove_mark(&client, date).await.expect("Could not remove mark");
         },
         _ => {
             // Invalid command, print an error message
