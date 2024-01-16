@@ -1,5 +1,5 @@
 use std::ffi::OsStr;
-use chrono::{FixedOffset, NaiveDate};
+use chrono::{NaiveDate};
 use inquire::{DateSelect, Editor, required, Text};
 use tokio_postgres::Client;
 use crate::config;

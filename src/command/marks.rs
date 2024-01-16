@@ -1,5 +1,5 @@
 use std::fmt::{Display, Formatter};
-use chrono::{DateTime, Local, NaiveDate, NaiveDateTime};
+use chrono::{NaiveDate, NaiveDateTime};
 use tokio_postgres::{Client, Row};
 
 #[derive(Debug)]
@@ -41,7 +41,6 @@ pub async fn read_marks(client: &Client, time_frame: Option<NaiveDate>) -> std::
 }
 
 pub async fn list_marks(client: &Client, time_frame: Option<NaiveDate>) -> std::io::Result<()> {
-    println!("{:#?}", time_frame);
     let marks = read_marks(client, time_frame).await.unwrap();
 
     marks.iter().for_each(|mark| {
