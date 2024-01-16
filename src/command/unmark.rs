@@ -33,7 +33,7 @@ fn get_input_for_unmark(marks: Vec<Mark>) -> InputUnmark {
 }
 
 pub async fn remove_mark(client: &Client) -> std::io::Result<()> {
-    let _marks = crate::command::marks::read_marks(client, None).await.expect("Unable to read marks");
+    let _marks = crate::command::marks::read_marks(client, chrono::Utc::now().date_naive()).await.expect("Unable to read marks");
     let input = get_input_for_unmark(_marks);
 
     if !input.confirm {

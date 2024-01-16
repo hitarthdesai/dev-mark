@@ -31,11 +31,11 @@ async fn main() {
         },
         "marks" => {
             let mut _time_arg = arguments.next();
-            let time_option: Option<NaiveDate> = match _time_arg {
+            let date: NaiveDate = match _time_arg {
                 Some(_t) => {
                     match _t.as_str() {
                         "--today" => {
-                            Some(chrono::Local::now().date_naive())
+                            chrono::Local::now().date_naive()
                         },
                         t => {
                             match t.starts_with("--date=") {
@@ -45,7 +45,7 @@ async fn main() {
                                 },
                                 true => {
                                     let date = t.replace("--date=", "");
-                                    Some(NaiveDate::parse_from_str(date.as_str(), "%Y-%m-%d").expect("Invalid date format, expected YYYY-MM-DD"))
+                                    NaiveDate::parse_from_str(date.as_str(), "%Y-%m-%d").expect("Invalid date format, expected YYYY-MM-DD")
                                 }
                             }
 
@@ -58,7 +58,7 @@ async fn main() {
                 }
             };
 
-            command::marks::list_marks(&client, time_option).await.expect("Could not get marks");
+            command::marks::list_marks(&client, date).await.expect("Could not get marks");
         },
         "unmark" => {
             command::unmark::remove_mark(&client).await.expect("Could not remove mark");
