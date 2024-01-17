@@ -12,7 +12,7 @@ pub struct Mark {
 
 impl Display for Mark {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} on {}", self.title, self.created_at.format("%B%e, %Y at %H:%M"))
+        write!(f, "{}: {}\n", self.created_at.format("%H:%M").to_string(), self.note)
     }
 }
 

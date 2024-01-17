@@ -40,6 +40,7 @@ pub async fn remove_mark(client: &Client, date: NaiveDate) -> std::io::Result<()
         return Ok(());
     }
 
+    println!("You marked the following on {}:", date.format("%B %e, %Y").to_string());
     let input = get_input_for_unmark(_marks);
 
     if !input.confirm {
