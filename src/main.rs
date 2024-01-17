@@ -1,8 +1,7 @@
-use chrono::NaiveDate;
-
 mod command;
 mod db;
 mod config;
+mod argument;
 
 #[tokio::main]
 async fn main() {
@@ -30,63 +29,41 @@ async fn main() {
             command::mark::add_mark(&client, should_provide_date_picker).await.expect("Could not add mark");
         },
         "marks" => {
-            let mut _time_arg = arguments.next();
-            let date: NaiveDate = match _time_arg {
-                Some(_t) => {
-                    match _t.as_str() {
-                        "--today" => {
-                            chrono::Local::now().date_naive()
-                        },
-                        t => {
-                            match t.starts_with("--date=") {
-                                false => {
-                                    /* TODO: Allow to default to --today in config.json */
-                                    panic!("Error: Invalid argument. Allowed values: --today, --date=YYYY-MM-DD");
-                                },
-                                true => {
-                                    let date = t.replace("--date=", "");
-                                    NaiveDate::parse_from_str(date.as_str(), "%Y-%m-%d").expect("Invalid date format, expected YYYY-MM-DD")
-                                }
-                            }
-
-                        }
-                    }
-                },
+            let arg = arguments.next();
+            let date = match arg {
                 None => {
                     /* TODO: Allow to default to --today in config.json */
                     panic!("Error: No argument found. Allowed values: --today, --date=YYYY-MM-DD");
+                },
+                Some(t) => {
+                    match argument::date::get_date_from_args(t) {
+                        Ok(date) => { date },
+                        Err(e) => {
+                            panic!("Error: {}", e);
+                        }
+                    }
                 }
             };
 
             command::marks::list_marks(&client, date).await.expect("Could not get marks");
         },
         "unmark" => {
-            let mut _time_arg = arguments.next();
-            let date: NaiveDate = match _time_arg {
-                Some(_t) => {
-                    match _t.as_str() {
-                        "--today" => {
-                            chrono::Local::now().date_naive()
-                        },
-                        t => {
-                            match t.starts_with("--date=") {
-                                false => {
-                                    /* TODO: Allow to default to --today in config.json */
-                                    panic!("Error: Invalid argument. Allowed values: --today, --date=YYYY-MM-DD");
-                                },
-                                true => {
-                                    let date = t.replace("--date=", "");
-                                    NaiveDate::parse_from_str(date.as_str(), "%Y-%m-%d").expect("Invalid date format, expected YYYY-MM-DD")
-                                }
-                            }
-                        }
-                    }
-                },
+            let arg = arguments.next();
+            let date = match arg {
                 None => {
                     /* TODO: Allow to default to --today in config.json */
                     panic!("Error: No argument found. Allowed values: --today, --date=YYYY-MM-DD");
+                },
+                Some(t) => {
+                    match argument::date::get_date_from_args(t) {
+                        Ok(date) => { date },
+                        Err(e) => {
+                            panic!("Error: {}", e);
+                        }
+                    }
                 }
             };
+
 
             command::unmark::remove_mark(&client, date).await.expect("Could not remove mark");
         },

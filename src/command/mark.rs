@@ -56,7 +56,7 @@ fn get_input_for_mark(should_provide_date_picker: bool) -> InputMark {
     match should_provide_date_picker {
         true => {
             let _date = DateSelect::new("Date")
-                .with_help_message("Enter date for mark")
+                .with_help_message("Enter date.rs for mark")
                 .prompt().unwrap();
 
             input_mark.date = Some(_date);
