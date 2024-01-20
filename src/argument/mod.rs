@@ -1,12 +1,12 @@
 use chrono::NaiveDate;
 
 mod date;
-mod command;
+pub mod command;
 
 #[derive(Debug)]
 pub struct Arguments {
-    command: command::Command,
-    date: NaiveDate
+    pub command: command::Command,
+    pub date: NaiveDate
 }
 
 pub fn get_arguments() -> Result<Arguments, String> {
