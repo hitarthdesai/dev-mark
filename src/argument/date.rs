@@ -19,8 +19,8 @@ pub fn get_date_from_args(_arg: String) -> Result<NaiveDate, &'static str> {
                 let offset = offset[1..].parse::<i64>().expect("Invalid offset");
                 chrono::Duration::days(-offset)
             },
-            Some(c) => {
-                panic!("Invalid operator '{}'", c);
+            Some(_) => {
+                return Err("Invalid operator");
             }
         };
 
