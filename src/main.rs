@@ -8,6 +8,13 @@ async fn main() {
     config::initialize_config().expect("Could not read config");
     let client = db::connect::connect_to_db().await.expect("Could not connect to db");
 
+    let _args = match argument::get_arguments() {
+        Ok(args) => { args },
+        Err(e) => { panic!("Error: {}", e) }
+    };
+
+    return;
+
     let mut arguments = std::env::args();
     arguments.next(); // Skip the first argument
 
