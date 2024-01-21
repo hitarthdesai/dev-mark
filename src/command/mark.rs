@@ -1,13 +1,14 @@
 use std::ffi::OsStr;
 use chrono::{NaiveDate};
 use inquire::{Editor, required, Text};
-use tokio_postgres::Client;
 use crate::config;
+use crate::db::Database;
+use tokio_postgres::{Error};
 
 #[derive(Debug)]
-struct InputMark {
-    title: Option<String>,
-    note: String,
+pub struct InputMark {
+    pub title: Option<String>,
+    pub note: String,
 }
 
 fn get_input_for_mark() -> InputMark {
@@ -51,15 +52,12 @@ fn get_input_for_mark() -> InputMark {
     }
 }
 
-pub async fn add_mark(client: &Client, date: NaiveDate) -> std::io::Result<()> {
+pub async fn add_mark(db: &Database, date: NaiveDate) -> Result<(), Error> {
     let input = get_input_for_mark();
-
-    let statement = client.prepare("INSERT INTO marks (title, note, created_at) VALUES ($1, $2, $3) RETURNING id").await.expect("Could not prepare statement");
-
     let _title = &input.title.unwrap_or(String::new());
-    let _created_at = &date.and_hms_opt(0, 0, 0);
+    let _created_at = &date.and_hms_opt(0, 0, 0).unwrap();
 
-    client.query(&statement, &[_title, &input.note, _created_at]).await.expect("Could not execute query");
+    db.add_mark(_created_at, _title, &input.note).await.expect("Could not execute query");
 
     Ok(())
 }

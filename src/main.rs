@@ -15,7 +15,7 @@ async fn main() {
 
     match args.command {
         argument::command::Command::Mark => {
-            command::mark::add_mark(&db.client, args.date).await.expect("Could not add mark");
+            command::mark::add_mark(&db, args.date).await.expect("Could not add mark");
         },
         argument::command::Command::Marks => {
             command::marks::list_marks(&db.client, args.date).await.expect("Could not get marks");
