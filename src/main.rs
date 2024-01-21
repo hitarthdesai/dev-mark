@@ -2,6 +2,7 @@ mod command;
 mod db;
 mod config;
 mod argument;
+mod util;
 
 #[tokio::main]
 async fn main() {

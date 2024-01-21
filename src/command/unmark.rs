@@ -3,8 +3,8 @@ use inquire::{Confirm, MultiSelect};
 use inquire::list_option::ListOption;
 use inquire::validator::Validation;
 use tokio_postgres::Error;
-use crate::command::marks::{Mark, transform_marks};
 use crate::db::Database;
+use crate::util::mark::Mark;
 
 struct InputUnmark {
     ids: Vec<i64>,
@@ -41,7 +41,7 @@ pub async fn remove_mark(db: &Database, date: &NaiveDate) -> Result<(), Error> {
         return Ok(());
     }
 
-    let marks = transform_marks(&_marks).await?;
+    let marks = _marks.iter().map(Mark::new_from_row).collect::<Vec<Mark>>();
 
     println!("You marked the following on {}:", date.format("%B %e, %Y").to_string());
     let input = get_input_for_unmark(marks);
