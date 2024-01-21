@@ -16,7 +16,7 @@ fn get_input_for_mark() -> InputMark {
     let mark_style = &config.mark_style;
     let editor = &config.editor;
 
-    let input_mark = match mark_style {
+    match mark_style {
         config::MarkStyle::Default => {
             let _note = Text::new("Mark")
                 .with_placeholder("Some text to be marked")
@@ -48,9 +48,7 @@ fn get_input_for_mark() -> InputMark {
                 note: _note,
             }
         },
-    };
-
-    return input_mark;
+    }
 }
 
 pub async fn add_mark(client: &Client, date: NaiveDate) -> std::io::Result<()> {
