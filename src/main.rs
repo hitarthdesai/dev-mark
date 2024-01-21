@@ -6,7 +6,7 @@ mod argument;
 #[tokio::main]
 async fn main() {
     config::initialize_config().expect("Could not read config");
-    let _client = db::connect::connect_to_db().await.expect("Could not connect to db");
+    let client = db::connect::connect_to_db().await.expect("Could not connect to db");
 
     let args = match argument::get_arguments() {
         Ok(args) => { args },
@@ -15,13 +15,13 @@ async fn main() {
 
     match args.command {
         argument::command::Command::Mark => {
-            command::mark::add_mark(&_client, false).await.expect("Could not add mark");
+            command::mark::add_mark(&client, false).await.expect("Could not add mark");
         },
         argument::command::Command::Marks => {
-            command::marks::list_marks(&_client, args.date).await.expect("Could not get marks");
+            command::marks::list_marks(&client, args.date).await.expect("Could not get marks");
         },
         argument::command::Command::Unmark => {
-            command::unmark::remove_mark(&_client, args.date).await.expect("Could not remove mark");
+            command::unmark::remove_mark(&client, args.date).await.expect("Could not remove mark");
         },
     }
 }
