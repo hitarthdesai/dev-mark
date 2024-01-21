@@ -50,9 +50,8 @@ pub async fn remove_mark(db: &Database, date: &NaiveDate) -> Result<(), Error> {
         return Ok(());
     }
 
-    let statement = db.client.prepare("DELETE FROM marks WHERE id = $1").await.expect("Could not prepare statement");
-    for id in input.ids {
-        db.client.query(&statement, &[&id]).await.expect("Could not remove mark");
+    for id in input.ids.iter() {
+        db.delete_mark_by_id(id).await?;
     }
 
     Ok(())

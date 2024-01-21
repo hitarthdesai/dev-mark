@@ -20,6 +20,13 @@ impl Database {
 
         Ok(rows)
     }
+
+    pub async fn delete_mark_by_id(&self, id: &i64) -> Result<(), Error> {
+        let statement = self.client.prepare("DELETE FROM marks WHERE id = $1").await?;
+        self.client.query(&statement, &[id]).await?;
+
+        Ok(())
+    }
 }
 
 pub async fn get_database() -> Result<Database, Error> {
