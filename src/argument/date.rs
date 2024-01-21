@@ -10,10 +10,10 @@ enum DateOption {
 pub fn get_date_from_args(_arg: Option<String>) -> Result<NaiveDate, &'static str> {
     let arg = match _arg {
         None => { return Err("No date option provided. Expected one of --past, --today, --future"); },
-        Some(a) => { a.as_str() }
+        Some(a) => { a }
     };
 
-    let date_option = match arg {
+    let date_option = match arg.as_str() {
         "--past" => DateOption::Past,
         "--future" => DateOption::Future,
         _ => {
