@@ -4,12 +4,15 @@ pub fn get_time_from_args(arg: &String) -> Result<Option<NaiveTime>, &'static st
     let time_option = match arg.starts_with("--time") {
         false => { None }
         true => {
-            let offset = arg.replace("--time", "");
-            if offset.is_empty() {
-                return Err("Missing '=HH:MM:SS' after --time");
+            let arg = arg.replace("--time", "");
+            if &arg[0..1] != "=" {
+                return Err("Missing '=' after --time");
             }
 
-            let time = offset.parse::<NaiveTime>().expect("Invalid time");
+            let offset = arg[1..].trim();
+
+            /* TODO: Add ability to pars HH:MM:SS and HH:MM both */
+            let time = NaiveTime::parse_from_str(offset, "%R").expect("Invalid time");
             Some(time)
         },
     };
