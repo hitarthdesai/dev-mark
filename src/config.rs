@@ -4,7 +4,7 @@ use std::sync::Mutex;
 use serde::{Deserialize, Serialize};
 use lazy_static::lazy_static;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub enum MarkStyle {
     Default,
     Extended,
@@ -26,6 +26,10 @@ pub fn initialize_config() -> Result<(), Error> {
 
     let mut guard = CONFIG.lock().unwrap();
     assert!( guard.is_none() );
+
+    if config.mark_style == MarkStyle::Extended {
+        panic!("Extended mark style is not yet supported")
+    }
 
     *guard = Some(config);
     Ok(())

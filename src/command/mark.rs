@@ -54,10 +54,9 @@ fn get_input_for_mark() -> InputMark {
 
 pub async fn add_mark(db: &Database, date: NaiveDate) -> Result<(), Error> {
     let input = get_input_for_mark();
-    let _title = &input.title.unwrap_or(String::new());
     let _created_at = &date.and_hms_opt(0, 0, 0).unwrap();
 
-    db.add_mark(_created_at, _title, &input.note).await.expect("Could not execute query");
+    db.add_mark(_created_at, &input.note).await.expect("Could not execute query");
 
     Ok(())
 }

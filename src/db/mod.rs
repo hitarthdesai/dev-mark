@@ -7,9 +7,9 @@ pub struct Database {
 }
 
 impl Database {
-    pub async fn add_mark(&self, date: &chrono::NaiveDateTime, title: &String, note: &String) -> Result<(), Error> {
-        let statement = self.client.prepare("INSERT INTO marks (title, note, created_at) VALUES ($1, $2, $3)").await?;
-        self.client.query(&statement, &[title, note, date]).await?;
+    pub async fn add_mark(&self, date: &chrono::NaiveDateTime, note: &String) -> Result<(), Error> {
+        let statement = self.client.prepare("INSERT INTO marks (note, created_at) VALUES ($1, $2)").await?;
+        self.client.query(&statement, &[note, date]).await?;
 
         Ok(())
     }
