@@ -12,8 +12,7 @@ pub enum MarkStyle {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
-    pub mark_style: MarkStyle,
-    pub editor: String,
+    pub connect_string: String,
 }
 
 lazy_static! {
@@ -21,7 +20,7 @@ lazy_static! {
 }
 
 pub fn initialize_config() -> Result<(), Error> {
-    let _config = fs::read_to_string("./src/config.json")?;
+    let _config = fs::read_to_string("./config.json")?;
     let config: Config = serde_json::from_str(&_config)?;
 
     let mut guard = CONFIG.lock().unwrap();
