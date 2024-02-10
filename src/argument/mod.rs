@@ -1,4 +1,3 @@
-use inquire::{DateSelect, Text};
 use chrono::{NaiveDate, NaiveTime};
 
 mod date;
@@ -31,7 +30,11 @@ pub fn get_arguments() -> Result<Arguments, String> {
 
     /* TODO: Refactor the following code so that UI is not used in the argument module */
     let date = date_arg.unwrap_or_else(date::get_date_from_user);
-    let time = time_arg.unwrap_or_else(time::get_time_from_user);
+    /* We only want to prompt the user for a time if the command is "mark", otherwise return a default time */
+    let time = time_arg.unwrap_or(match command {
+        command::Command::Mark => time::get_time_from_user(),
+        _ => NaiveTime::from_hms_opt(0, 0, 0).unwrap()
+    });
 
     let args = Arguments {
         command,
