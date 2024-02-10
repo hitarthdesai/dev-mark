@@ -1,3 +1,4 @@
+use inquire::DateSelect;
 use chrono::{Duration, NaiveDate};
 
 pub fn get_date_from_args(arg: &String) -> Result<Option<NaiveDate>, &'static str> {
@@ -29,4 +30,8 @@ pub fn get_date_from_args(arg: &String) -> Result<Option<NaiveDate>, &'static st
     };
 
     Ok(date_option)
+}
+
+pub fn get_date_from_user() -> NaiveDate {
+    DateSelect::new("Date").prompt().unwrap()
 }

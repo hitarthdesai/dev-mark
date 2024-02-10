@@ -1,4 +1,5 @@
 use chrono::{NaiveTime};
+use inquire::Text;
 
 pub fn get_time_from_args(arg: &String) -> Result<Option<NaiveTime>, &'static str> {
     let time_option = match arg.starts_with("--time") {
@@ -18,4 +19,12 @@ pub fn get_time_from_args(arg: &String) -> Result<Option<NaiveTime>, &'static st
     };
 
     Ok(time_option)
+}
+
+pub fn get_time_from_user() -> NaiveTime {
+    let time = Text::new("Time")
+        .with_placeholder("Time for the mark (HH:MM)")
+        .prompt().unwrap();
+
+    NaiveTime::parse_from_str(time.as_str(), "%R").expect("Invalid time")
 }
