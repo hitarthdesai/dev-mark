@@ -1,9 +1,10 @@
 use std::ffi::OsStr;
-use chrono::{NaiveDate};
+use chrono::NaiveDateTime;
 use inquire::{Editor, required, Text};
 use crate::config;
 use crate::db::Database;
 use tokio_postgres::{Error};
+use crate::argument::Arguments;
 
 #[derive(Debug)]
 pub struct InputMark {
@@ -52,11 +53,11 @@ fn get_input_for_mark() -> InputMark {
     }
 }
 
-pub async fn add_mark(db: &Database, date: NaiveDate) -> Result<(), Error> {
+pub async fn add_mark(db: &Database, args: &Arguments) -> Result<(), Error> {
     let input = get_input_for_mark();
-    let _created_at = &date.and_hms_opt(0, 0, 0).unwrap();
+    let created_at = &NaiveDateTime::new(args.date, args.time);
 
-    db.add_mark(_created_at, &input.note).await.expect("Could not execute query");
+    db.add_mark(created_at, &input.note).await.expect("Could not execute query");
 
     Ok(())
 }
