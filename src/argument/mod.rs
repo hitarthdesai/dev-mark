@@ -13,7 +13,7 @@ pub struct Arguments {
 
 pub fn get_arguments() -> Result<Arguments, String> {
     let mut arguments = std::env::args();
-    arguments.next(); // Skip the first argument
+    arguments.next(); /* Skip the first argument */
 
     let potential_command = arguments.next();
     let command = command::get_command_from_args(potential_command)?;
