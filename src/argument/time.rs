@@ -2,6 +2,17 @@ use chrono::{NaiveTime};
 use inquire::Text;
 use crate::util::time::parse_time_from_string;
 
+/**
+ * Get the time from the command line arguments
+ *
+ * # Arguments
+ *
+ * * `arg` - The argument to parse
+ *
+ * # Returns
+ *
+ * An `Option` containing the time, or `None` if the argument is not a time
+ */
 pub fn get_time_from_args(arg: &String) -> Result<Option<NaiveTime>, &'static str> {
     let time_option = match arg.starts_with("--time") {
         false => { None }
@@ -13,7 +24,6 @@ pub fn get_time_from_args(arg: &String) -> Result<Option<NaiveTime>, &'static st
 
             let offset = arg[1..].trim().to_string();
 
-            /* TODO: Add ability to pars HH:MM:SS and HH:MM both */
             match parse_time_from_string(&offset) {
                 Ok(time) => { Some(time) },
                 Err(_) => { None }
@@ -24,6 +34,13 @@ pub fn get_time_from_args(arg: &String) -> Result<Option<NaiveTime>, &'static st
     Ok(time_option)
 }
 
+/**
+ * Get the time from the user
+ *
+ * # Returns
+ *
+ * The time selected by the user
+ */
 pub fn get_time_from_user() -> NaiveTime {
     let time = Text::new("Time")
         .with_placeholder("Time for the mark (HH:MM)")

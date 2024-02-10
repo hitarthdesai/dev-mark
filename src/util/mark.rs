@@ -10,12 +10,18 @@ pub struct Mark {
 }
 
 impl Display for Mark {
+    /**
+     * Format a mark for display in marks or unmark command
+     */
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}: {}\n", self.created_at.format("%H:%M").to_string(), self.note)
     }
 }
 
 impl Mark {
+    /**
+     * Create a new mark from a database row
+     */
     pub fn new_from_row(row: &Row) -> Self {
         let id: i8 = i8::try_from(row.get::<&str, i64>("id")).unwrap();
         let note = row.get::<&str, &str>("note").to_string();

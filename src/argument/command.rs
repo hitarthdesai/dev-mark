@@ -5,6 +5,21 @@ pub enum Command {
     Unmark,
 }
 
+/**
+ * Get the command from the command line arguments
+ *
+ * # Arguments
+ *
+ * * `arg` - An optional string containing the command
+ *
+ * # Returns
+ *
+ * A `Command` enum variant
+ *
+ * # Errors
+ *
+ * If the command is not recognized
+ */
 pub fn get_command_from_args(arg: Option<String>) -> Result<Command, &'static str> {
     match arg {
         None => {

@@ -1,6 +1,17 @@
 use inquire::DateSelect;
 use chrono::{Duration, NaiveDate};
 
+/**
+ * Get the date from the command line arguments
+ *
+ * # Arguments
+ *
+ * * `arg` - The argument to parse
+ *
+ * # Returns
+ *
+ * An `Option` containing the date, or `None` if the argument is not a date
+ */
 pub fn get_date_from_args(arg: &String) -> Result<Option<NaiveDate>, &'static str> {
     let date_option = match arg.starts_with("--today") {
         false => { None }
@@ -32,6 +43,13 @@ pub fn get_date_from_args(arg: &String) -> Result<Option<NaiveDate>, &'static st
     Ok(date_option)
 }
 
+/**
+ * Get the date from the user
+ *
+ * # Returns
+ *
+ * The date selected by the user
+ */
 pub fn get_date_from_user() -> NaiveDate {
     DateSelect::new("Date").prompt().unwrap()
 }
