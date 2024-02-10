@@ -16,13 +16,13 @@ async fn main() {
 
     match args.command {
         argument::command::Command::Mark => {
-            command::mark::add_mark(&db, args.date).await.expect("Could not add mark");
+            command::mark::add_mark(&db, &args).await.expect("Could not add mark");
         },
         argument::command::Command::Marks => {
-            command::marks::list_marks(&db, &args.date).await.expect("Could not get marks");
+            command::marks::list_marks(&db, &args).await.expect("Could not get marks");
         },
         argument::command::Command::Unmark => {
-            command::unmark::remove_mark(&db, &args.date).await.expect("Could not remove mark");
+            command::unmark::remove_mark(&db, &args).await.expect("Could not remove mark");
         },
     }
 }
