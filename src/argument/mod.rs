@@ -43,7 +43,7 @@ pub fn get_arguments() -> Result<Arguments, String> {
     }).last();
 
     /* TODO: Refactor the following code so that UI is not used in the argument module */
-    let date = date_arg.unwrap_or_else(date::get_date_from_user);
+    let date = date_arg.unwrap_or_else(date::get_date);
 
     /*
      * We only want to prompt the user for a time if the command is "mark",

@@ -5,14 +5,16 @@ use serde::{Deserialize, Serialize};
 use lazy_static::lazy_static;
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
-pub enum MarkStyle {
-    Default,
-    Extended,
+pub enum DefaultDateTimeArg {
+    Current,
+    Input,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub connect_string: String,
+    pub default_date: DefaultDateTimeArg,
+    pub default_time: DefaultDateTimeArg,
 }
 
 lazy_static! {
