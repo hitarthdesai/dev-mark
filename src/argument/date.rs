@@ -1,5 +1,7 @@
 use inquire::DateSelect;
 use chrono::{Duration, NaiveDate};
+use crate::config::{CONFIG, DefaultDateTimeArg};
+
 
 /**
  * Get the date from the command line arguments
@@ -12,7 +14,7 @@ use chrono::{Duration, NaiveDate};
  *
  * An `Option` containing the date, or `None` if the argument is not a date
  */
-pub fn get_date_from_args(arg: &String) -> Result<Option<NaiveDate>, &'static str> {
+fn get_date_from_args(arg: &String) -> Result<Option<NaiveDate>, &'static str> {
     let date_option = match arg.starts_with("--today") {
         false => { None }
         true => {
@@ -50,6 +52,36 @@ pub fn get_date_from_args(arg: &String) -> Result<Option<NaiveDate>, &'static st
  *
  * The date selected by the user
  */
-pub fn get_date_from_user() -> NaiveDate {
+fn get_date_from_user() -> NaiveDate {
     DateSelect::new("Date").prompt().unwrap()
+}
+
+/**
+ * Get the date to use considering default date mode
+ *
+ * # Returns
+ *
+ * The date to use
+ */
+pub fn get_date(args: &Vec<String>) -> NaiveDate {
+    let date_arg = args.iter().filter_map(|arg| {
+        get_date_from_args(arg).ok()?
+    }).last();
+
+    if date_arg.is_some() {
+        return date_arg.unwrap();
+    }
+
+    let guard = CONFIG.lock().unwrap();
+    let config = guard.as_ref().unwrap();
+    let default_date_mode = &config.default_date;
+
+    match default_date_mode {
+        DefaultDateTimeArg::Current => {
+            chrono::Local::now().date_naive()
+        },
+        DefaultDateTimeArg::Input => {
+            get_date_from_user()
+        },
+    }
 }
