@@ -14,7 +14,7 @@ use crate::config::{CONFIG, DefaultDateTimeArg};
  *
  * An `Option` containing the date, or `None` if the argument is not a date
  */
-pub fn get_date_from_args(arg: &String) -> Result<Option<NaiveDate>, &'static str> {
+fn get_date_from_args(arg: &String) -> Result<Option<NaiveDate>, &'static str> {
     let date_option = match arg.starts_with("--today") {
         false => { None }
         true => {
@@ -63,7 +63,15 @@ fn get_date_from_user() -> NaiveDate {
  *
  * The date to use
  */
-pub fn get_date() -> NaiveDate {
+pub fn get_date(args: &Vec<String>) -> NaiveDate {
+    let date_arg = args.iter().filter_map(|arg| {
+        get_date_from_args(arg).ok()?
+    }).last();
+
+    if date_arg.is_some() {
+        return date_arg.unwrap();
+    }
+
     let guard = CONFIG.lock().unwrap();
     let config = guard.as_ref().unwrap();
     let default_date_mode = &config.default_date;

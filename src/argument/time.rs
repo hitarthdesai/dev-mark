@@ -1,5 +1,6 @@
 use chrono::{NaiveDate, NaiveTime};
 use inquire::Text;
+use crate::argument::time;
 use crate::config::{CONFIG, DefaultDateTimeArg};
 use crate::util::time::parse_time_from_string;
 
@@ -14,7 +15,7 @@ use crate::util::time::parse_time_from_string;
  *
  * An `Option` containing the time, or `None` if the argument is not a time
  */
-pub fn get_time_from_args(arg: &String) -> Result<Option<NaiveTime>, &'static str> {
+fn get_time_from_args(arg: &String) -> Result<Option<NaiveTime>, &'static str> {
     let time_option = match arg.starts_with("--time") {
         false => { None }
         true => {
@@ -57,17 +58,26 @@ fn get_time_from_user() -> NaiveTime {
  *
  * The time to use
  */
-pub fn get_time() -> NaiveTime {
-    let guard = CONFIG.lock().unwrap();
-    let config = guard.as_ref().unwrap();
-    let default_time_mode = &config.default_time;
+pub fn get_time(args: &Vec<String>) -> NaiveTime {
+    let time_arg = args.iter().filter_map(|arg| {
+        get_time_from_args(arg).ok()?
+    }).last();
 
-    match default_time_mode {
-        DefaultDateTimeArg::Current => {
-            chrono::Local::now().time()
-        },
-        DefaultDateTimeArg::Input => {
-            get_time_from_user()
-        },
+    match time_arg {
+        Some(time) => { time },
+        None => {
+            let guard = CONFIG.lock().unwrap();
+            let config = guard.as_ref().unwrap();
+            let default_time_mode = &config.default_time;
+
+            match default_time_mode {
+                DefaultDateTimeArg::Current => {
+                    chrono::Local::now().time()
+                },
+                DefaultDateTimeArg::Input => {
+                    get_time_from_user()
+                },
+            }
+        }
     }
 }

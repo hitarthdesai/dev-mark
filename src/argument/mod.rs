@@ -33,26 +33,8 @@ pub fn get_arguments() -> Result<Arguments, String> {
     let command = command::get_command_from_args(potential_command)?;
 
     let remaining_args: Vec<String> = arguments.collect();
-
-    let date_arg = remaining_args.iter().filter_map(|arg| {
-        date::get_date_from_args(arg).ok()?
-    }).last();
-
-    let time_arg = remaining_args.iter().filter_map(|arg| {
-        time::get_time_from_args(arg).ok()?
-    }).last();
-
-    /* TODO: Refactor the following code so that UI is not used in the argument module */
-    let date = date_arg.unwrap_or_else(date::get_date);
-
-    /*
-     * We only want to prompt the user for a time if the command is "mark",
-     * otherwise return a default time
-     */
-    let time = time_arg.unwrap_or(match command {
-        command::Command::Mark => time::get_time(),
-        _ => NaiveTime::from_hms_opt(0, 0, 0).unwrap()
-    });
+    let date = date::get_date(&remaining_args);
+    let time = time::get_time(&remaining_args);
 
     let args = Arguments {
         command,
