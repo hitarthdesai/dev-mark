@@ -50,7 +50,7 @@ pub fn get_arguments() -> Result<Arguments, String> {
      * otherwise return a default time
      */
     let time = time_arg.unwrap_or(match command {
-        command::Command::Mark => time::get_time_from_user(),
+        command::Command::Mark => time::get_time(),
         _ => NaiveTime::from_hms_opt(0, 0, 0).unwrap()
     });
 
