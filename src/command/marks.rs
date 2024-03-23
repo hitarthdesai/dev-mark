@@ -2,6 +2,7 @@ use tokio_postgres::{Error};
 use crate::argument::Arguments;
 use crate::db::Database;
 use crate::util::mark::Mark;
+use termion::color::{Blue, Fg, Red, Reset};
 
 pub async fn list_marks(db: &Database, args: &Arguments) -> Result<(), Error> {
     let _marks = db.read_marks_by_date(&args.date).await?;
@@ -13,9 +14,9 @@ pub async fn list_marks(db: &Database, args: &Arguments) -> Result<(), Error> {
     }
 
 
-    println!("On {}, you marked:", args.date.format("%B %e, %Y").to_string());
+    println!("Your marks for {}{}{}:", Fg(Red), args.date.format("%B %e, %Y").to_string(), Fg(Reset));
     marks.iter().for_each(|mark| {
-        println!("{}: {}\n", mark.created_at.format("%H:%M").to_string(), mark.note);
+        println!("{}{}{}: {}", Fg(Blue), mark.created_at.format("%H:%M").to_string(), Fg(Reset), mark.note);
     });
 
     Ok(())
