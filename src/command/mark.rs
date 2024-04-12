@@ -1,7 +1,7 @@
 use chrono::NaiveDateTime;
 use inquire::{required, Text};
+use sqlx::sqlite::SqliteError;
 use crate::db::Database;
-use tokio_postgres::{Error};
 use crate::argument::Arguments;
 
 fn get_input_for_mark() -> String {
@@ -12,7 +12,7 @@ fn get_input_for_mark() -> String {
         .prompt().unwrap()
 }
 
-pub async fn add_mark(db: &Database, args: &Arguments) -> Result<(), Error> {
+pub async fn add_mark(db: &Database, args: &Arguments) -> Result<(), SqliteError> {
     let created_at = &NaiveDateTime::new(args.date, args.time);
     let note = get_input_for_mark();
 

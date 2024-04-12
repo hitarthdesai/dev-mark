@@ -5,3 +5,7 @@
 .gitconfig
 
 config.json
+
+.sqlx
+
+database.db

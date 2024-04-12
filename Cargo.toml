@@ -6,10 +6,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-inquire = { version = "0.6.2", features = ["editor", "date"] }
+inquire = { version = "0.7.4", features = ["editor", "date"] }
 tokio = { version = "*", features = ["full"] }
-tokio-postgres = { version = "0.7.10", features = ["with-chrono-0_4"] }
-chrono = { version = "0.4.31", features = [] }
+sqlx = { version = "0.7.4", features = ["runtime-tokio", "sqlite", "chrono"] }
+chrono = { version = "0.4.37", features = [] }
 crossterm = "0.27.0"
 serde_json = "1.0.111"
 config = { version = "0.13.4", features = [] }
