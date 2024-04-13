@@ -13,7 +13,7 @@ impl Database {
      */
     pub async fn add_mark(&self, date: &chrono::NaiveDateTime, note: &String) -> Result<(), Error> {
         sqlx::query!(
-            "INSERT INTO marks (note, created_at) VALUES (:note, :created_at)",
+            "INSERT INTO marks (note, created_at) VALUES (?, ?)",
             note,
             date
         )
@@ -29,13 +29,11 @@ impl Database {
     pub async fn read_marks_by_date(&self, date: &chrono::NaiveDate) -> Result<Vec<Mark>, Error> {
         let rows = sqlx::query_as!(
             Mark,
-            "SELECT * FROM Marks WHERE DATE(created_at)=:date ORDER BY created_at",
-            date as _
+            "SELECT * FROM Marks WHERE DATE(created_at)=? ORDER BY created_at",
+            date
         )
         .fetch_all(&self.pool)
         .await?;
-
-        rows.last().unwrap().created_at;
 
         Ok(rows)
     }
@@ -45,7 +43,7 @@ impl Database {
      */
     pub async fn delete_mark_by_id(&self, id: &i64) -> Result<(), Error> {
         sqlx::query!(
-            "DELETE FROM marks WHERE id = :id",
+            "DELETE FROM marks WHERE id=?",
             id
         )
         .execute(&self.pool)
