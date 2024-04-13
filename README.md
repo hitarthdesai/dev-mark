@@ -18,11 +18,11 @@ A command-line note-taking tool to mark important things throughout your day.
 
 ## Instructions to run locally
 1. Clone the repo and install dependencies using `cargo build`
-2. Create a psql database and record its host, port, and name
-3. Create a `config.json` file at the root of the project with the following structure:
-    ```json
-    {
-        "connect_string": "host=localhost port=15432 dbname=postgres"
-    }
+2. To initialize the database, download the `setup.sql` file from this repository
+3. Then run the following command in your terminal:
+    ```bash
+    sqlite3 database.db < setup.sql
     ```
-4. Run the binary using `cargo run <command> <args>`
+    This will create the necessary tables in the database
+4. Be sure to update the name of the database in your `.env` file if you used something apart from `database.db`
+5. Run the binary using `cargo run <command> <args>`
