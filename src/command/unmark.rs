@@ -1,7 +1,7 @@
 use inquire::{Confirm, MultiSelect};
 use inquire::list_option::ListOption;
 use inquire::validator::Validation;
-use tokio_postgres::Error;
+use sqlx::Error;
 use crate::argument::Arguments;
 use crate::db::Database;
 use crate::util::mark::Mark;
@@ -35,13 +35,11 @@ fn get_input_for_unmark(marks: Vec<Mark>) -> InputUnmark {
 }
 
 pub async fn remove_mark(db: &Database, args: &Arguments) -> Result<(), Error> {
-    let _marks = db.read_marks_by_date(&args.date).await?;
-    if _marks.len() == 0 {
+    let marks = db.read_marks_by_date(&args.date).await?;
+    if marks.len() == 0 {
         println!("You have no marks for {}", &args.date.format("%B %e, %Y").to_string());
         return Ok(());
     }
-
-    let marks = _marks.iter().map(Mark::new_from_row).collect::<Vec<Mark>>();
 
     println!("You marked the following on {}:", &args.date.format("%B %e, %Y").to_string());
     let input = get_input_for_unmark(marks);
